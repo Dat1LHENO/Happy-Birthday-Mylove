@@ -177,6 +177,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: -120px;
 }
 
 .hero-arch-frame {
@@ -360,7 +361,7 @@ body {
 }
 
 .poem-greeting::after {
-    content: '';
+    content: "";
     display: block;
     width: 48px;
     height: 2px;
@@ -1616,7 +1617,8 @@ body {
 }
 
 @keyframes autoScrollPulse {
-    0%, 100% {
+    0%,
+    100% {
         box-shadow: 0 0 10px rgba(230, 92, 123, 0.4);
     }
     50% {
@@ -1635,4 +1637,3 @@ body {
 .scroll-pill.scrolling-active .pause-icon {
     animation: spinSlow 3s linear infinite;
 }
-
