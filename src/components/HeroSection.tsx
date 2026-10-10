@@ -60,7 +60,7 @@ export default function HeroSection({
                     <h1 className="title-birthday">Ngày Tuyệt Vời Nhất</h1>
 
                     <p className="invitation-intro">
-                        Mừng sinh nhật thứ 22 công chúa bé bỏng của anh 💝
+                        Mừng sinh nhật thứ 21 công chúa bé bỏng của anh 💝
                     </p>
 
                     <div className="event-highlight-date">
@@ -75,9 +75,15 @@ export default function HeroSection({
             <div
                 className={`hero-scroll-indicator ${hasScrolled && !isAutoScrolling ? "faded" : ""}`}
                 onClick={handleScrollClick}
-                title={isAutoScrolling ? "Tạm dừng cuộn" : "Bắt đầu tự động cuộn xuống"}
+                title={
+                    isAutoScrolling
+                        ? "Tạm dừng cuộn"
+                        : "Bắt đầu tự động cuộn xuống"
+                }
             >
-                <div className={`scroll-pill ${isAutoScrolling ? "scrolling-active" : ""}`}>
+                <div
+                    className={`scroll-pill ${isAutoScrolling ? "scrolling-active" : ""}`}
+                >
                     {isAutoScrolling ? (
                         <>
                             <Pause size={13} className="pause-icon" />

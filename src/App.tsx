@@ -4,10 +4,12 @@ import HeroSection from "./components/HeroSection";
 import PoemSection from "./components/PoemSection";
 import GallerySection from "./components/GallerySection";
 import CountdownCalendarSection from "./components/CountdownCalendarSection";
+import PhotoBookSection from "./components/PhotoBookSection";
 import BlessingFooter from "./components/BlessingFooter";
 import FloatingToolbar from "./components/FloatingToolbar";
 import WishModal from "./components/WishModal";
 import GiftModal from "./components/GiftModal";
+import HackTrollModal from "./components/HackTrollModal";
 import HeartBurst from "./components/HeartBurst";
 import SparkleScrollAtmosphere from "./components/SparkleScrollAtmosphere";
 import { useAutoScroll } from "./hooks/useAutoScroll";
@@ -43,9 +45,12 @@ const INITIAL_WISHES: Wish[] = [
 
 export default function App(): React.JSX.Element {
     const [_wishes, setWishes] = useState<Wish[]>(INITIAL_WISHES);
-    const [likeCount, setLikeCount] = useState<number>(20);
+    const [likeCount, setLikeCount] = useState<number>(21);
     const [isWishModalOpen, setIsWishModalOpen] = useState<boolean>(false);
     const [isGiftModalOpen, setIsGiftModalOpen] = useState<boolean>(false);
+    const [isHackModalOpen, setIsHackModalOpen] = useState<boolean>(false);
+    const [isHackLockActive, setIsHackLockActive] = useState<boolean>(false);
+    const [musicForcePlayTrigger, setMusicForcePlayTrigger] = useState<number | null>(null);
     const [burstTrigger, setBurstTrigger] = useState<string | null>(null);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -71,7 +76,7 @@ export default function App(): React.JSX.Element {
     const handleLike = () => {
         setLikeCount((prev) => prev + 1);
         handleBurstHearts();
-        showToast("Cảm ơn bạn đã thả tim! ❤️");
+        showToast("Cảm ơn bạn đã thả tim cho Quỳnh nhó ❤️");
     };
 
     const handleSubmitWish = ({ author, message }: SubmitWishPayload) => {
@@ -93,7 +98,9 @@ export default function App(): React.JSX.Element {
         };
         setWishes((prev) => [giftWish, ...prev]);
         handleBurstHearts();
-        showToast(`Cảm ơn ${sender} đã tặng món quà "${gift.name}"! 🎁✨`);
+        showToast(
+            `Cảm ơn ${sender} đã tặng món quà "${gift.name} tới Quỳnh nhó"! 🎁✨`,
+        );
     };
 
     return (
@@ -113,8 +120,11 @@ export default function App(): React.JSX.Element {
                 {/* Dynamic Scroll Progress & Ambient Twinkling Atmosphere */}
                 <SparkleScrollAtmosphere />
 
-                {/* Background Music Record Button */}
-                <MusicPlayer />
+                {/* Background Music Record Button (automatically muted/paused during hack prank) */}
+                <MusicPlayer
+                    isExternalPaused={isHackLockActive}
+                    forcePlayTrigger={musicForcePlayTrigger}
+                />
 
                 {/* Section 1: Hero & Invitation Title */}
                 <HeroSection
@@ -128,11 +138,19 @@ export default function App(): React.JSX.Element {
                 {/* Section 3: Gallery Collage */}
                 <GallerySection />
 
+                {/* Section 3.5: Interactive Photo Book */}
+                <PhotoBookSection />
+
                 {/* Section 4: Event Countdown & Calendar */}
                 <CountdownCalendarSection />
 
-                {/* Section 7: Blessing Footer */}
-                <BlessingFooter />
+                {/* Section 7: Blessing Footer with Secret Gift button */}
+                <BlessingFooter
+                    onOpenHackGift={() => {
+                        setIsHackModalOpen(true);
+                        setIsHackLockActive(true);
+                    }}
+                />
 
                 {/* Bottom Floating Interaction Toolbar */}
                 <FloatingToolbar
@@ -158,6 +176,20 @@ export default function App(): React.JSX.Element {
                 isOpen={isGiftModalOpen}
                 onClose={() => setIsGiftModalOpen(false)}
                 onSendGift={handleSendGift}
+            />
+
+            {/* Secret Troll Hacker Gift Modal */}
+            <HackTrollModal
+                isOpen={isHackModalOpen}
+                onClose={() => {
+                    setIsHackModalOpen(false);
+                    setIsHackLockActive(false);
+                }}
+                onLockStateChange={(isLocked) => setIsHackLockActive(isLocked)}
+                onUnlockedSuccess={() => {
+                    setMusicForcePlayTrigger(Date.now());
+                    showToast("Mở khóa thành công! Chúc mừng sinh nhật Quỳnh yêu! 💖");
+                }}
             />
         </div>
     );

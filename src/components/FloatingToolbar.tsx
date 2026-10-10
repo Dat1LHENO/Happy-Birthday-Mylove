@@ -18,7 +18,7 @@ export default function FloatingToolbar({
     likeCount,
     isAutoScrolling = false,
     onToggleAutoScroll,
-}: FloatingToolbarProps): React.JSX.Element {
+}: FloatingToolbarProps) {
     return (
         <div className="floating-bottom-toolbar">
             <div className="toolbar-inner">
@@ -27,7 +27,11 @@ export default function FloatingToolbar({
                     <button
                         className={`btn-toolbar-action btn-auto-scroll ${isAutoScrolling ? "active" : ""}`}
                         onClick={onToggleAutoScroll}
-                        title={isAutoScrolling ? "Dừng tự động cuộn" : "Bật tự động cuộn đến cuối"}
+                        title={
+                            isAutoScrolling
+                                ? "Dừng tự động cuộn"
+                                : "Bật tự động cuộn đến cuối"
+                        }
                     >
                         {isAutoScrolling ? (
                             <>
@@ -36,7 +40,11 @@ export default function FloatingToolbar({
                             </>
                         ) : (
                             <>
-                                <Play size={13} fill="#ea536e" color="#ea536e" />
+                                <Play
+                                    size={13}
+                                    fill="#ea536e"
+                                    color="#ea536e"
+                                />
                                 <span>Tự cuộn</span>
                             </>
                         )}

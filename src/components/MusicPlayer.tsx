@@ -1,13 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-export default function MusicPlayer(): React.JSX.Element {
+interface MusicPlayerProps {
+  isExternalPaused?: boolean;
+  forcePlayTrigger?: number | null;
+}
+
+export default function MusicPlayer({
+  isExternalPaused = false,
+  forcePlayTrigger = null,
+}: MusicPlayerProps): React.JSX.Element {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const wasPlayingBeforePauseRef = useRef<boolean>(false);
 
   useEffect(() => {
     // Attempt autoplay upon first user interaction on the window
     const handleFirstInteraction = () => {
-      if (audioRef.current && !isPlaying) {
+      if (audioRef.current && !isPlaying && !isExternalPaused) {
         audioRef.current.play().then(() => {
           setIsPlaying(true);
         }).catch(() => {
@@ -25,7 +34,39 @@ export default function MusicPlayer(): React.JSX.Element {
       window.removeEventListener('click', handleFirstInteraction);
       window.removeEventListener('touchstart', handleFirstInteraction);
     };
-  }, [isPlaying]);
+  }, [isPlaying, isExternalPaused]);
+
+  // Handle external pause when entering hack troll mode, and resume on unlock/close
+  useEffect(() => {
+    if (isExternalPaused) {
+      const isCurrentlyPlaying = audioRef.current ? !audioRef.current.paused : false;
+      if (isCurrentlyPlaying || isPlaying) {
+        wasPlayingBeforePauseRef.current = true;
+        audioRef.current?.pause();
+        setIsPlaying(false);
+      }
+    } else {
+      if (wasPlayingBeforePauseRef.current) {
+        wasPlayingBeforePauseRef.current = false;
+        audioRef.current?.play().then(() => {
+          setIsPlaying(true);
+        }).catch((err) => {
+          console.warn('Resume music error:', err);
+        });
+      }
+    }
+  }, [isExternalPaused, isPlaying]);
+
+  // Force play music (e.g. when hack is unlocked with celebration)
+  useEffect(() => {
+    if (forcePlayTrigger && audioRef.current) {
+      audioRef.current.play().then(() => {
+        setIsPlaying(true);
+      }).catch((err) => {
+        console.warn('Force play music error:', err);
+      });
+    }
+  }, [forcePlayTrigger]);
 
   const toggleMusic = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -33,6 +74,7 @@ export default function MusicPlayer(): React.JSX.Element {
     if (isPlaying) {
       audioRef.current.pause();
       setIsPlaying(false);
+      wasPlayingBeforePauseRef.current = false;
     } else {
       audioRef.current.play().then(() => {
         setIsPlaying(true);
@@ -61,3 +103,4 @@ export default function MusicPlayer(): React.JSX.Element {
     </>
   );
 }
+
