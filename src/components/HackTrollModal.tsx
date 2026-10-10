@@ -60,13 +60,7 @@ function HackTrollContent({
             });
         }
 
-        // Focus input after slight animation delay
-        const focusTimer = setTimeout(() => {
-            inputRef.current?.focus();
-        }, 300);
-
         return () => {
-            clearTimeout(focusTimer);
             if (clockAudio) {
                 clockAudio.pause();
                 clockAudio.currentTime = 0;
@@ -383,7 +377,6 @@ function HackTrollContent({
                                         setInputValue(e.target.value);
                                         if (errorMessage) setErrorMessage(null);
                                     }}
-                                    autoFocus
                                     required
                                 />
                             </div>

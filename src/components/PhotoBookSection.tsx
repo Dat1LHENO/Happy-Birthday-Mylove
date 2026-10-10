@@ -29,8 +29,7 @@ const BOOK_PAGES: PhotoBookPage[] = [
         id: 0,
         type: "cover",
         title: "KỶ NIỆM TUỔI 21",
-        subtitle:
-            "Cuốn sách lưu giữ những khoảnh khắc đẹp nhất của Đỗ Thị Thu Quỳnh",
+        subtitle: "",
         tag: "những trang sách kỷ niểm 💖",
     },
     {
@@ -142,11 +141,25 @@ export default function PhotoBookSection(): React.JSX.Element {
     const totalPages = BOOK_PAGES.length;
 
     const goToNextPage = () => {
-        flipBookRef.current?.pageFlip()?.flipNext();
+        const pf = flipBookRef.current?.pageFlip();
+        if (!pf) return;
+        const current = pf.getCurrentPageIndex();
+        if (current >= totalPages - 1) {
+            pf.flip(0);
+        } else {
+            pf.flipNext();
+        }
     };
 
     const goToPrevPage = () => {
-        flipBookRef.current?.pageFlip()?.flipPrev();
+        const pf = flipBookRef.current?.pageFlip();
+        if (!pf) return;
+        const current = pf.getCurrentPageIndex();
+        if (current <= 0) {
+            pf.flip(totalPages - 1);
+        } else {
+            pf.flipPrev();
+        }
     };
 
     const goToPage = (pageIndex: number) => {
@@ -157,7 +170,7 @@ export default function PhotoBookSection(): React.JSX.Element {
         setCurrentPage(e.data);
     }, []);
 
-    // Auto flip pages
+    // Auto flip pages (loops back to page 0 when reaching the end)
     useEffect(() => {
         if (!isAutoPlaying) return;
 
@@ -165,10 +178,10 @@ export default function PhotoBookSection(): React.JSX.Element {
             const pf = flipBookRef.current?.pageFlip();
             if (!pf) return;
             const current = pf.getCurrentPageIndex();
-            if (current < totalPages - 1) {
-                pf.flipNext();
+            if (current >= totalPages - 1) {
+                pf.flip(0);
             } else {
-                setIsAutoPlaying(false);
+                pf.flipNext();
             }
         }, 3200);
 
@@ -194,14 +207,14 @@ export default function PhotoBookSection(): React.JSX.Element {
                 <div className="photobook-card-wrapper photobook-react-flip-wrapper">
                     {/* HTMLFlipBook Component */}
                     <FlipBook
-                        width={350}
-                        height={515}
+                        width={410}
+                        height={580}
                         size="stretch"
-                        minWidth={280}
-                        maxWidth={390}
-                        minHeight={440}
-                        maxHeight={560}
-                        maxShadowOpacity={0.45}
+                        minWidth={300}
+                        maxWidth={460}
+                        minHeight={480}
+                        maxHeight={620}
+                        maxShadowOpacity={0.4}
                         showCover={false}
                         mobileScrollSupport={true}
                         usePortrait={true}
@@ -231,7 +244,7 @@ export default function PhotoBookSection(): React.JSX.Element {
                                         {BOOK_PAGES[0].title}
                                     </h3>
                                     <div className="cover-name-calligraphy">
-                                        Đỗ Thị Thu Quỳnh &amp; Phạm Tuấn Đạt
+                                        Đỗ Thị Thu Quỳnh
                                     </div>
                                     <p className="cover-desc">
                                         {BOOK_PAGES[0].subtitle}
